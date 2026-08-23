@@ -1,0 +1,29 @@
+name: Dispatch Test
+
+on:
+  repository_dispatch:
+    types: [ai_request]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create result
+        run: |
+          mkdir -p results
+          printf '%s\n' 'DISPATCH_OK' > results/dispatch-test.txt
+
+      - name: Commit result
+        run: |
+          git config user.name "ai-chat-bot"
+          git config user.email "ai-chat-bot@users.noreply.github.com"
+          git add results/dispatch-test.txt
+          git commit -m "Dispatch test result" || exit 0
+          git push
